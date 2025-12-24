@@ -1,0 +1,109 @@
+# ===============================
+# Import Required Libraries
+# ===============================
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+
+
+# ===============================
+# Load Dataset
+# ===============================
+df = pd.read_csv("advertising.csv")
+print(df.head())
+
+
+# ===============================
+# Dataset Information
+# ===============================
+print(df.info())
+print(df.describe())
+
+
+# ===============================
+# Check Missing Values
+# ===============================
+print(df.isnull().sum())
+
+
+# ===============================
+# Exploratory Data Analysis (EDA)
+# ===============================
+sns.pairplot(df)
+plt.show()
+
+plt.figure(figsize=(6, 4))
+sns.heatmap(df.corr(), annot=True, cmap="coolwarm")
+plt.title("Correlation Heatmap")
+plt.show()
+
+
+# ===============================
+# Feature Selection
+# ===============================
+X = df[['TV', 'Radio', 'Newspaper']]
+y = df['Sales']
+
+
+# ===============================
+# Train-Test Split
+# ===============================
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+
+# ===============================
+# Build Linear Regression Model
+# ===============================
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+
+# ===============================
+# Predictions
+# ===============================
+y_pred = model.predict(X_test)
+
+
+# ===============================
+# Model Evaluation
+# ===============================
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+print("Mean Squared Error:", mse)
+print("R2 Score:", r2)
+
+
+# ===============================
+# Actual vs Predicted Visualization
+# ===============================
+plt.scatter(y_test, y_pred)
+plt.xlabel("Actual Sales")
+plt.ylabel("Predicted Sales")
+plt.title("Actual vs Predicted Sales")
+plt.show()
+
+
+# ===============================
+# Model Coefficients
+# ===============================
+coeff_df = pd.DataFrame({
+    "Feature": X.columns,
+    "Coefficient": model.coef_
+})
+
+print(coeff_df)
+
+
+# ===============================
+# Conclusion
+# ===============================
+print("Sales Prediction model built successfully.")
+print("TV advertising has the highest impact on sales.")
